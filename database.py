@@ -37,6 +37,31 @@ def register_node(client_id: uuid.UUID):
     finally:
         conn.close()
 
+def get_all_nodes():
+    """Retrieves all registered nodes from the database."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT client_id, registered_at FROM nodes")
+    nodes = cursor.fetchall()
+    conn.close()
+    return nodes
+
+def delete_node(client_id: uuid.UUID):
+    """Deletes a specific node from the database."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM nodes WHERE client_id = ?", (str(client_id),))
+    conn.commit()
+    conn.close()
+
+def delete_all_nodes():
+    """Deletes all nodes from the database."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM nodes")
+    conn.commit()
+    conn.close()
+
 if __name__ == "__main__":
     create_table()
     print("Database and table created successfully.")
