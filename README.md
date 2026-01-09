@@ -42,11 +42,13 @@ This project provides a simple backend for a split learning system, allowing nod
     ```json
     {
       "action": "REGISTER",
-      "client_id": "your-uuid-v4"
+      "client_id": "your-uuid-v4",
+      "run_id": "your-run-id"
     }
     ```
     -   `action` (string, required): Must be "REGISTER".
     -   `client_id` (string, required): A unique identifier for the node (UUID v4 format).
+    -   `run_id` (string, required): A unique identifier for the run.
 -   **Success Response:**
     -   **Code:** 200
     -   **Content:** `{"message": "Node registered successfully"}`
@@ -76,17 +78,19 @@ This project provides a simple backend for a split learning system, allowing nod
 
 ### Get Single Node
 
--   **URL:** `/nodes/{client_id}`
+-   **URL:** `/nodes/{client_id}/{run_id}`
 -   **Method:** `GET`
--   **Description:** Retrieves details of a specific node by its client ID.
+-   **Description:** Retrieves details of a specific node by its client ID and run ID.
 -   **URL Parameters:**
     -   `client_id` (string, required): The UUID of the node.
+    -   `run_id` (string, required): The ID of the run.
 -   **Success Response:**
     -   **Code:** 200
     -   **Content:**
         ```json
         {
           "client_id": "2b846577-befe-4bef-837b-f1654de6abbf",
+          "run_id": "your-run-id",
           "registered_at": "2026-01-07T10:00:00",
           "number_images": 1000,
           "ram": "8GB",
@@ -99,11 +103,12 @@ This project provides a simple backend for a split learning system, allowing nod
 
 ### Update Node Details
 
--   **URL:** `/nodes/{client_id}`
+-   **URL:** `/nodes/{client_id}/{run_id}`
 -   **Method:** `PATCH`
 -   **Description:** Updates specific details of an existing node. You can update `number_images`, `ram`, or `cpu`. Only provide the fields you wish to change.
 -   **URL Parameters:**
     -   `client_id` (string, required): The UUID of the node to update.
+    -   `run_id` (string, required): The ID of the run.
 -   **Request Body (example):**
     ```json
     {
@@ -120,6 +125,7 @@ This project provides a simple backend for a split learning system, allowing nod
         ```json
         {
           "client_id": "2b846577-befe-4bef-837b-f1654de6abbf",
+          "run_id": "your-run-id",
           "registered_at": "2026-01-07T10:00:00",
           "number_images": 1500,
           "ram": "16GB",
@@ -134,14 +140,15 @@ This project provides a simple backend for a split learning system, allowing nod
 
 ### Delete a Node
 
--   **URL:** `/nodes/{client_id}`
+-   **URL:** `/nodes/{client_id}/{run_id}`
 -   **Method:** `DELETE`
--   **Description:** Deletes a specific node by its client ID.
+-   **Description:** Deletes a specific node by its client ID and run ID.
 -   **URL Parameters:**
     -   `client_id` (string, required): The UUID of the node to delete.
+    -   `run_id` (string, required): The ID of the run.
 -   **Success Response:**
     -   **Code:** 200
-    -   **Content:** `{"message": "Node {client_id} deleted successfully"}`
+    -   **Content:** `{"message": "Node {client_id} with run_id {run_id} deleted successfully"}`
 
 ### Delete All Nodes
 
@@ -156,7 +163,7 @@ This project provides a simple backend for a split learning system, allowing nod
 
 **Register a node:**
 ```bash
-curl -X POST "http://localhost:8000/register" -H "Content-Type: application/json" -d '{"action": "REGISTER", "client_id": "2b846577-befe-4bef-837b-f1654de6abbf"}'
+curl -X POST "http://localhost:8000/register" -H "Content-Type: application/json" -d '{"action": "REGISTER", "client_id": "2b846577-befe-4bef-837b-f1654de6abbf", "run_id": "your-run-id"}'
 ```
 
 **Get all nodes:**
@@ -166,17 +173,17 @@ curl -X GET "http://localhost:8000/nodes"
 
 **Get a single node:**
 ```bash
-curl -X GET "http://localhost:8000/nodes/2b846577-befe-4bef-837b-f1654de6abbf"
+curl -X GET "http://localhost:8000/nodes/2b846577-befe-4bef-837b-f1654de6abbf/your-run-id"
 ```
 
 **Update a node's details:**
 ```bash
-curl -X PATCH "http://localhost:8000/nodes/2b846577-befe-4bef-837b-f1654de6abbf" -H "Content-Type: application/json" -d '{"number_images": 1200, "ram": "16GB"}'
+curl -X PATCH "http://localhost:8000/nodes/2b846577-befe-4bef-837b-f1654de6abbf/your-run-id" -H "Content-Type: application/json" -d '{"number_images": 1200, "ram": "16GB"}'
 ```
 
 **Delete a specific node:**
 ```bash
-curl -X DELETE "http://localhost:8000/nodes/2b846577-befe-4bef-837b-f1654de6abbf"
+curl -X DELETE "http://localhost:8000/nodes/2b846577-befe-4bef-837b-f1654de6abbf/your-run-id"
 ```
 
 **Delete all nodes:**

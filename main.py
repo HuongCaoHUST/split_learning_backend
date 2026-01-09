@@ -9,9 +9,11 @@ app = FastAPI()
 class RegisterRequest(BaseModel):
     action: str
     client_id: uuid.UUID
+    run_id: str
 
 class Node(BaseModel):
     client_id: uuid.UUID
+    run_id: str
     registered_at: str
     number_images: Optional[int] = None
     ram: Optional[str] = None
@@ -35,21 +37,22 @@ async def get_nodes():
     nodes = get_all_nodes()
     return [Node(**dict(row)) for row in nodes]
 
-@app.get("/nodes/{client_id}", response_model=Node)
-async def get_single_node(client_id: uuid.UUID):
-    node = get_node(client_id)
+@app.get("/nodes/{client_id}/{run_id}", response_model=Node)
+async def get_single_node(client_id: uuid.UUID, run_id: str):
+    node = get_node(client_id, run_id)
     if node is None:
         raise HTTPException(status_code=404, detail="Node not found")
     return Node(**dict(node))
 
-@app.patch("/nodes/{client_id}", response_model=Node)
-async def update_node(client_id: uuid.UUID, node_update: NodeUpdate):
-    existing_node = get_node(client_id)
+@app.patch("/nodes/{client_id}/{run_id}", response_model=Node)
+async def update_node(client_id: uuid.UUID, run_id: str, node_update: NodeUpdate):
+    existing_node = get_node(client_id, run_id)
     if existing_node is None:
         raise HTTPException(status_code=404, detail="Node not found")
     
     updated = update_node_details(
         client_id=client_id,
+        run_id=run_id,
         number_images=node_update.number_images,
         ram=node_update.ram,
         cpu=node_update.cpu
@@ -58,13 +61,13 @@ async def update_node(client_id: uuid.UUID, node_update: NodeUpdate):
         raise HTTPException(status_code=500, detail="Failed to update node")
     
     # Fetch the updated node to return it
-    updated_node = get_node(client_id)
+    updated_node = get_node(client_id, run_id)
     return Node(**dict(updated_node))
 
-@app.delete("/nodes/{client_id}")
-async def delete_single_node(client_id: uuid.UUID):
-    delete_node(client_id)
-    return {"message": f"Node {client_id} deleted successfully"}
+@app.delete("/nodes/{client_id}/{run_id}")
+async def delete_single_node(client_id: uuid.UUID, run_id: str):
+    delete_node(client_id, run_id)
+    return {"message": f"Node {client_id} with run_id {run_id} deleted successfully"}
 
 @app.delete("/nodes")
 async def delete_all_nodes_endpoint():
@@ -74,7 +77,7 @@ async def delete_all_nodes_endpoint():
 @app.post("/register")
 async def register(request: RegisterRequest):
     if request.action == "REGISTER":
-        register_node(request.client_id)
+        register_node(request.client_id, request.run_id)
         return {"message": "Node registered successfully"}
     else:
         raise HTTPException(status_code=400, detail="Invalid action")
