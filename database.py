@@ -72,12 +72,12 @@ def update_node_details(client_id: uuid.UUID, run_id: str, number_images: int = 
     conn.close()
     return rows_affected > 0
 
-def register_node(client_id: uuid.UUID, run_id: str):
+def register_node(client_id: uuid.UUID, run_id: str, number_images: int = None):
     """Registers a new node in the database."""
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
-        cursor.execute("INSERT INTO nodes (client_id, run_id, number_images, ram, cpu) VALUES (?, ?, NULL, NULL, NULL)", (str(client_id), run_id))
+        cursor.execute("INSERT INTO nodes (client_id, run_id, number_images, ram, cpu) VALUES (?, ?, ?, NULL, NULL)", (str(client_id), run_id, number_images))
         conn.commit()
     except sqlite3.IntegrityError:
         # Client ID and run_id combination already exists

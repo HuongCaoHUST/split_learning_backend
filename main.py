@@ -10,6 +10,7 @@ class RegisterRequest(BaseModel):
     action: str
     client_id: uuid.UUID
     run_id: str
+    number_images: Optional[int] = None
 
 class Node(BaseModel):
     client_id: uuid.UUID
@@ -77,7 +78,7 @@ async def delete_all_nodes_endpoint():
 @app.post("/register")
 async def register(request: RegisterRequest):
     if request.action == "REGISTER":
-        register_node(request.client_id, request.run_id)
+        register_node(request.client_id, request.run_id, request.number_images)
         return {"message": "Node registered successfully"}
     else:
         raise HTTPException(status_code=400, detail="Invalid action")
