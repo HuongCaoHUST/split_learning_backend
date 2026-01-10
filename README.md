@@ -138,6 +138,17 @@ This project provides a simple backend for a split learning system, allowing nod
     -   **Code:** 500 Internal Server Error
     -   **Content:** `{"detail": "Failed to update node"}`
 
+### Delete Nodes by Run ID
+
+-   **URL:** `/nodes/{run_id}`
+-   **Method:** `DELETE`
+-   **Description:** Deletes all nodes associated with a specific run ID.
+-   **URL Parameters:**
+    -   `run_id` (string, required): The ID of the run.
+-   **Success Response:**
+    -   **Code:** 200
+    -   **Content:** `{"message": "Nodes with run_id {run_id} deleted successfully"}`
+
 ### Delete a Node
 
 -   **URL:** `/nodes/{client_id}/{run_id}`
@@ -179,6 +190,11 @@ curl -X GET "http://localhost:8000/nodes/2b846577-befe-4bef-837b-f1654de6abbf/yo
 **Update a node's details:**
 ```bash
 curl -X PATCH "http://localhost:8000/nodes/2b846577-befe-4bef-837b-f1654de6abbf/your-run-id" -H "Content-Type: application/json" -d '{"number_images": 1200, "ram": "16GB"}'
+```
+
+**Delete nodes by run_id:**
+```bash
+curl -X DELETE "http://localhost:8000/nodes/your-run-id"
 ```
 
 **Delete a specific node:**

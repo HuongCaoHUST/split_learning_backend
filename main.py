@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Optional
 import uuid
-from database import create_table, register_node, get_all_nodes, delete_node, delete_all_nodes, get_node, update_node_details
+from database import create_table, register_node, get_all_nodes, delete_node, delete_all_nodes, get_node, update_node_details, delete_node_by_run_id
 
 app = FastAPI()
 
@@ -64,6 +64,11 @@ async def update_node(client_id: uuid.UUID, run_id: str, node_update: NodeUpdate
     # Fetch the updated node to return it
     updated_node = get_node(client_id, run_id)
     return Node(**dict(updated_node))
+
+@app.delete("/nodes/{run_id}")
+async def delete_nodes_by_run_id(run_id: str):
+    delete_node_by_run_id(run_id)
+    return {"message": f"Nodes with run_id {run_id} deleted successfully"}
 
 @app.delete("/nodes/{client_id}/{run_id}")
 async def delete_single_node(client_id: uuid.UUID, run_id: str):

@@ -102,6 +102,14 @@ def delete_node(client_id: uuid.UUID, run_id: str):
     conn.commit()
     conn.close()
 
+def delete_node_by_run_id(run_id: str):
+    """Deletes nodes from the database by run_id."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM nodes WHERE run_id = ?", (run_id,))
+    conn.commit()
+    conn.close()
+
 def delete_all_nodes():
     """Deletes all nodes from the database."""
     conn = get_db_connection()
